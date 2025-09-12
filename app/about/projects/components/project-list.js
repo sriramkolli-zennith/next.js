@@ -1,12 +1,9 @@
-import Card from "@/components/card"
 
-export default async function ProjectList() {
-  const response = await fetch(
-    'http://localhost:3001/repos',
-    // { cache: 'no-store' }
-  )
-  const repos = await response.json()
-  // throw new Error('oops')
+import Card from "@/components/card";
+import reposData from "../../../../db.json";
+
+export default function ProjectList() {
+  const repos = reposData.repos;
 
   return (
     <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -17,11 +14,10 @@ export default async function ProjectList() {
               <div className="font-semibold">{repo.title}</div>
               <div>🌟{repo.stargazers_count}</div>
             </div>
-
             <div>{repo.description}</div>
           </Card>
         </li>
       ))}
     </ul>
-  )
+  );
 }
