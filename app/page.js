@@ -5,8 +5,8 @@ import Card from "@/components/card"
 
 export default function Home({ searchParams }) {
   const [isVisible, setIsVisible] = useState(true)
-  const [names, setNames] = useState(['Piotr', 'John', 'Terry'])
-  const name = 'Piotr'
+  const [names, setNames] = useState(['sriram', 'John', 'Terry'])
+  const name = 'sriram'
   const handleClick = () => {
     setIsVisible(!isVisible)
   }
