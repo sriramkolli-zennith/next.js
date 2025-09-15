@@ -1,23 +1,25 @@
 import { notFound } from 'next/navigation'
-
-const titles = {
-  'first': 'Hello First!',
-  'second': 'Hello Second!'
-}
+import { getPost } from '@/lib/posts'
 
 export async function generateMetadata({ params }, parent) {
-  const description = (await parent).description ?? 'Default desc'
-
-  return {
-    title: titles[params.slug],
-    description
-  }
+  try {
+    const { frontmatter } = await getPost(params.slug)
+    return frontmatter
+  } catch (e) { }
 }
 
-export default function BlogPage({ params }) {
-  if (!['first', 'second'].includes(params.slug)) {
+export default async function BlogPage({ params }) {
+  let post
+
+  try {
+    post = await getPost(params.slug)
+  } catch (e) {
     notFound()
   }
 
-  return (<>Hello! {params.slug}</>)
+  return (
+    <article className="prose dark:prose-invert">
+      {post.content}
+    </article>
+  )
 }
