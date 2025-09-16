@@ -1,29 +1,20 @@
-import { getPost } from '@/lib/posts'
-import fs from 'fs'
-import path from 'path'
+import Pagination from '@/components/pagination'
+import { getPosts } from '@/lib/posts'
 import Link from 'next/link'
 
-
-
-export default async function BlogPostsPage() {
-  const files = fs.readdirSync(
-    path.join(
-      process.cwd(), 'content'
-    )
-  )
-
-  const posts = await Promise.all(
-    files.map(async filename => {
-      const { frontmatter } = await getPost(filename)
-
-      return {
-        frontmatter,
-        slug: filename.replace('.mdx', '')
-      }
-    })
-  )
-
-  console.log(posts)
+export default async function BlogPostsPage(
+  { searchParams }
+) {
+  const tags = searchParams.tags?.split(',')
+  const order = searchParams.order ?? 'newest'
+  const page = searchParams.page ?? 1
+  const limit = searchParams.limit ?? 3
+  const { posts, pageCount } = await getPosts({
+    tags,
+    newest: order === 'newest',
+    page,
+    limit
+  })
 
   return (
     <>
@@ -33,6 +24,12 @@ export default async function BlogPostsPage() {
 
       <hr />
 
+      <div className="mb-8">
+        Display&nbsp;
+        {order === 'newest' && <Link href="/blog?order=oldest" className="underline">oldest</Link>}
+        {order === 'oldest' && <Link href="/blog?order=newest" className="underline">newest</Link>}
+      </div>
+
       <ul className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {posts.map(post => (
           <li key={post.slug}>
@@ -41,6 +38,10 @@ export default async function BlogPostsPage() {
           </li>
         ))}
       </ul>
+
+      <div className="mt-8">
+        <Pagination pageCount={pageCount} />
+      </div>
     </>
   )
 }
